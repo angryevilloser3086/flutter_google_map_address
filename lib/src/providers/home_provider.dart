@@ -133,3 +133,20 @@ class HomeProvider extends ChangeNotifier {
 
   
 }
+
+
+
+//
+// {
+//   name: 480,
+//   street: 480 E Meadow Dr,
+//   isoCountryCode: US,
+//    country: United States,
+//     postalCode: 94306, 
+//     administrativeArea: California, 
+//     subAdministrativeArea: Santa Clara County, 
+//     locality: Palo Alto, 
+//     subLocality: , 
+//     thoroughfare: East Meadow Drive, 
+//     subThoroughfare: 480
+//     }

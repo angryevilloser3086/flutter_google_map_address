@@ -52,11 +52,12 @@ class _MapScreenState extends State<MapScreen> {
   void fetchAddressDetail(LatLng location) async {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(location.latitude, location.longitude);
+    print(placemarks.first.toJson());
     setState(() {
       street = placemarks[0].street!;
       addressTitle = placemarks[0].name!;
       locality = placemarks[0].locality!;
-      city = placemarks[0].subLocality!;
+      city = placemarks[0].subAdministrativeArea!;
       pincode = placemarks[0].postalCode!;
       state = placemarks[0].administrativeArea!;
       country = placemarks[0].country!;
@@ -118,13 +119,33 @@ class _MapScreenState extends State<MapScreen> {
               onCameraMove: (CameraPosition pos) {
                 streamController.add(pos.target);
               },
+              markers: markers,
               initialCameraPosition: CameraPosition(
                 target: initPos!,
                 zoom: 14.4746,
               ),
+              onTap: (latLang) {
+                //print(latLang.toJson());
+                setAddress(latLang);
+                setState(() {});
+              },
               mapType: MapType.terrain,
             ),
     );
+  }
+
+  setAddress(LatLng latLng) {
+    setState(() {
+      markerPos = latLng;
+      markers.add(Marker(
+        markerId: const MarkerId('1'),
+        position: latLng,
+        onTap: () {
+          //print("Tapped");
+        },
+      ));
+      fetchAddressDetail(markerPos!);
+    });
   }
 
   backButton() {
@@ -187,11 +208,15 @@ class _MapScreenState extends State<MapScreen> {
                                       color: Colors.black87),
                                 ),
                                 const Padding(padding: EdgeInsets.all(2)),
-                                Text(
-                                  "$locality,$city,$state,$pincode,$country",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black54,
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width*.8,
+                                  child: Text(
+                                    "$locality,$city,$state,$pincode,$country",
+                                    maxLines: 2,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black54,
+                                    ),
                                   ),
                                 )
                               ],
@@ -314,8 +339,8 @@ class _MapScreenState extends State<MapScreen> {
 
   void updateAddress() {
     address = Address(
-        title:_typeAddr!.name!="Other"? _typeAddr!.name:other.text,
-        name:flatNo.text.isEmpty? addressTitle:flatNo.text,
+        title: _typeAddr!.name != "Other" ? _typeAddr!.name : other.text,
+        name: flatNo.text.isEmpty ? addressTitle : flatNo.text,
         street: street,
         subAdminArea: "",
         adminArea: state,
@@ -331,7 +356,7 @@ class _MapScreenState extends State<MapScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>const HomeScreen(), maintainState: false),
+            builder: (context) => const HomeScreen(), maintainState: false),
       );
     }).catchError((err) {
       throw Exception(err);

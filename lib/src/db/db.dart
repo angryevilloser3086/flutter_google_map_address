@@ -15,7 +15,7 @@ class DB {
   }
 
   Future<void> insertAddr(Address address) async {
-    bool res= false;
+    //bool res= false;
     getDb().then((db) {
       var ad = {
         "title": address.title,
@@ -25,7 +25,6 @@ class DB {
         "country": address.country,
         "postal_code": address.postalCode,
         "city": address.subAdminArea,
-
         "Locality": address.locality,
       };
       db.insert('address', ad, conflictAlgorithm: ConflictAlgorithm.replace).then((value)  {
